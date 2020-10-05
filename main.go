@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"crypto/subtle"
 	"errors"
 	"log"
 	"os"
@@ -70,11 +69,11 @@ func Backend(c *logical.BackendConfig) *backend {
 }
 
 func (b *backend) pathAuthLogin(_ context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
-	password := d.Get("password").(string)
+	//	password := d.Get("password").(string)
 
-	if subtle.ConstantTimeCompare([]byte(password), []byte("super-secret-password")) != 1 {
-		return nil, logical.ErrPermissionDenied
-	}
+	//	if subtle.ConstantTimeCompare([]byte(password), []byte("super-secret-password")) != 1 {
+	//		return nil, logical.ErrPermissionDenied
+	//	}
 
 	// Compose the response
 	return &logical.Response{
@@ -87,8 +86,8 @@ func (b *backend) pathAuthLogin(_ context.Context, req *logical.Request, d *fram
 				"fruit": "banana",
 			},
 			LeaseOptions: logical.LeaseOptions{
-				TTL:       30 * time.Second,
-				MaxTTL:    60 * time.Minute,
+				TTL:       30 * time.Hour,
+				MaxTTL:    60 * time.Hour,
 				Renewable: true,
 			},
 		},
@@ -105,5 +104,5 @@ func (b *backend) pathAuthRenew(ctx context.Context, req *logical.Request, d *fr
 		return nil, errors.New("internal data does not match")
 	}
 
-	return framework.LeaseExtend(30*time.Second, 60*time.Minute, b.System())(ctx, req, d)
+	return framework.LeaseExtend(30*time.Hour, 60*time.Hour, b.System())(ctx, req, d)
 }
